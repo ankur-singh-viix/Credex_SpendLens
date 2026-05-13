@@ -1,17 +1,21 @@
 import { notFound } from "next/navigation";
 import { getAudit } from "@/lib/storage";
-import { AuditResults } from "../../../components/AuditResults";
+import { AuditResults } from "@/components/AuditResults";
 import type { Metadata } from "next";
 
 interface Props {
   params: { id: string };
 }
 
+const APP_URL =
+  process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const record = await getAudit(params.id);
   if (!record) return { title: "Audit not found — SpendLens" };
 
   const savings = record.summary.totalMonthlySavings;
+
   const title =
     savings > 0
       ? `I found $${savings}/mo in AI tool savings — SpendLens`
@@ -19,8 +23,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const description =
     savings > 0
-      ? `This team could save $${savings}/mo ($${record.summary.totalAnnualSavings}/yr) by optimising their AI tool stack. See the full breakdown.`
-      : "Free AI spend audit — see if your team is overpaying for Cursor, Copilot, Claude, ChatGPT and more.";
+      ? `This team could save $${savings}/mo ($${record.summary.totalAnnualSavings}/yr) on AI tools. See the full breakdown — free audit by SpendLens.`
+      : "Free AI spend audit — this stack is already well-optimised. See how yours compares.";
+
+  const ogImageUrl = `${APP_URL}/api/og?id=${params.id}`;
 
   return {
     title,
@@ -29,12 +35,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title,
       description,
       type: "website",
-      images: ["/og-default.png"],
+      url: `${APP_URL}/audit/${params.id}`,
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
+      images: [ogImageUrl],
     },
   };
 }

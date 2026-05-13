@@ -14,25 +14,34 @@ const spaceMono = Space_Mono({
   weight: ["400", "700"],
 });
 
+const APP_URL =
+  process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+
 export const metadata: Metadata = {
   title: "SpendLens — Free AI Tool Spend Audit",
   description:
-    "Find out if you're overspending on AI tools. Get an instant audit of your Cursor, Claude, ChatGPT, Copilot and more — with exact savings you can capture today.",
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"
-  ),
+    "Find out if you're overpaying for AI tools. Get an instant audit of your Cursor, Claude, ChatGPT, Copilot spend — with exact savings you can capture today.",
+  metadataBase: new URL(APP_URL),
   openGraph: {
     title: "SpendLens — Free AI Tool Spend Audit",
     description:
-      "Find out if you're overspending on AI tools. Takes 2 minutes.",
+      "Enter what your team pays. Get an instant breakdown of where you're overspending — free, no login required.",
     type: "website",
-    images: ["/og-default.png"],
+    images: [
+      {
+        url: `${APP_URL}/api/og`,
+        width: 1200,
+        height: 630,
+        alt: "SpendLens — Free AI Tool Spend Audit",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "SpendLens — Free AI Tool Spend Audit",
-    description: "Find out if you're overspending on AI tools in 2 minutes.",
-    images: ["/og-default.png"],
+    description:
+      "Find out if you're overpaying for AI tools in 2 minutes. Free audit.",
+    images: [`${APP_URL}/api/og`],
   },
 };
 
