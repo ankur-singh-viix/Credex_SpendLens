@@ -1,0 +1,108 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --surface-0: #0a0e0d;
+    --surface-1: #0f1512;
+    --surface-2: #141c18;
+    --surface-3: #1a2420;
+    --surface-4: #212e29;
+    --brand: #0db896;
+    --brand-light: #5eebc9;
+    --text-muted: #6b8c82;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--surface-0);
+    color: #e8f0ee;
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--surface-1);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--surface-4);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--brand);
+  }
+}
+
+@layer components {
+  .glass {
+    background: rgba(20, 28, 24, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(13, 184, 150, 0.1);
+  }
+
+  .glass-hover {
+    transition: all 0.2s ease;
+  }
+  .glass-hover:hover {
+    border-color: rgba(13, 184, 150, 0.25);
+    background: rgba(26, 36, 32, 0.8);
+  }
+
+  .brand-glow {
+    box-shadow: 0 0 20px rgba(13, 184, 150, 0.15);
+  }
+
+  .input-field {
+    @apply w-full bg-surface-2 border border-surface-4 rounded-lg px-3 py-2 text-sm
+           text-white placeholder-[#4a6b62] transition-all duration-200
+           focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500/30;
+  }
+
+  .label {
+    @apply block text-xs font-medium text-[#6b8c82] uppercase tracking-wider mb-1.5;
+  }
+
+  .btn-primary {
+    @apply bg-brand-500 hover:bg-brand-400 text-white font-semibold px-6 py-3 rounded-lg
+           transition-all duration-200 hover:shadow-lg hover:shadow-brand-500/20
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply bg-surface-3 hover:bg-surface-4 text-white font-medium px-4 py-2 rounded-lg
+           border border-surface-4 hover:border-brand-500/30 transition-all duration-200;
+  }
+
+  .card {
+    @apply bg-surface-1 border border-surface-3 rounded-xl p-5;
+  }
+
+  .tool-card {
+    @apply bg-surface-1 border border-surface-3 rounded-xl p-5
+           transition-all duration-200;
+  }
+  .tool-card.active {
+    @apply border-brand-500/40 bg-surface-2;
+  }
+}
+
+/* Noise texture overlay */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
