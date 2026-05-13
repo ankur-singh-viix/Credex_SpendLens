@@ -9,10 +9,14 @@ interface Props {
   record: AuditRecord;
 }
 
-const RECOMMENDATION_CONFIG: Record
-  RecommendationType,
-  { label: string; color: string; bg: string; icon: string }
-> = {
+type RecommendationConfig = {
+  label: string;
+  color: string;
+  bg: string;
+  icon: string;
+};
+
+const RECOMMENDATION_CONFIG: Record<RecommendationType, RecommendationConfig> = {
   downgrade: {
     label: "Downgrade plan",
     color: "text-amber-400",
@@ -62,7 +66,6 @@ export function AuditResults({ record }: Props) {
 
   return (
     <main className="relative min-h-screen">
-      {/* Background */}
       <div
         className="pointer-events-none fixed inset-0 z-0 opacity-[0.03]"
         style={{
@@ -73,7 +76,6 @@ export function AuditResults({ record }: Props) {
       />
 
       <div className="relative z-10">
-        {/* Nav */}
         <nav className="border-b border-surface-3/50 px-6 py-4">
           <div className="max-w-4xl mx-auto flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2">
@@ -91,7 +93,7 @@ export function AuditResults({ record }: Props) {
 
         <div className="max-w-4xl mx-auto px-4 py-10 space-y-8">
 
-          {/* ── Hero savings card ── */}
+          {/* Hero savings card */}
           <div
             className={cn(
               "rounded-2xl p-8 border text-center animate-fade-up",
@@ -106,7 +108,7 @@ export function AuditResults({ record }: Props) {
               <>
                 <div className="text-5xl mb-4">✓</div>
                 <h1 className="text-2xl font-bold text-emerald-400 mb-2">
-                  You're spending well
+                  You&apos;re spending well
                 </h1>
                 <p className="text-[#8aada6] max-w-md mx-auto">
                   Your current AI tool stack is well-matched to your team size and
@@ -138,7 +140,7 @@ export function AuditResults({ record }: Props) {
             )}
           </div>
 
-          {/* ── Credex CTA for high savings ── */}
+          {/* Credex CTA for high savings */}
           {summary.hasHighSavings && (
             <div className="rounded-xl border border-brand-500/30 bg-brand-500/5 p-6 animate-fade-up flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <div className="flex-1">
@@ -163,7 +165,7 @@ export function AuditResults({ record }: Props) {
             </div>
           )}
 
-          {/* ── AI Summary ── */}
+          {/* AI Summary */}
           {summary.aiSummary && (
             <div className="card animate-fade-up">
               <p className="text-xs font-medium text-brand-400 uppercase tracking-widest mb-3">
@@ -173,7 +175,7 @@ export function AuditResults({ record }: Props) {
             </div>
           )}
 
-          {/* ── Per-tool breakdown ── */}
+          {/* Per-tool breakdown */}
           <div className="animate-fade-up">
             <h2 className="text-sm font-semibold text-[#6b8c82] uppercase tracking-widest mb-4">
               Per-tool breakdown
@@ -185,7 +187,7 @@ export function AuditResults({ record }: Props) {
             </div>
           </div>
 
-          {/* ── Spend summary table ── */}
+          {/* Spend summary table */}
           <div className="card animate-fade-up">
             <h2 className="text-sm font-semibold text-[#6b8c82] uppercase tracking-widest mb-4">
               Summary
@@ -193,7 +195,9 @@ export function AuditResults({ record }: Props) {
             <div className="space-y-3">
               <div className="flex justify-between text-sm">
                 <span className="text-[#8aada6]">Current monthly spend</span>
-                <span className="font-medium">${summary.totalCurrentSpend.toLocaleString()}</span>
+                <span className="font-medium">
+                  ${summary.totalCurrentSpend.toLocaleString()}
+                </span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-[#8aada6]">Recommended spend</span>
@@ -217,7 +221,7 @@ export function AuditResults({ record }: Props) {
             </div>
           </div>
 
-          {/* ── Low savings / optimal CTA ── */}
+          {/* Optimal CTA */}
           {summary.isAlreadyOptimal && (
             <div className="card text-center animate-fade-up">
               <p className="text-sm text-[#8aada6] mb-4">
@@ -227,7 +231,7 @@ export function AuditResults({ record }: Props) {
             </div>
           )}
 
-          {/* ── Share + actions ── */}
+          {/* Share + actions */}
           <div className="flex flex-col sm:flex-row gap-3 animate-fade-up">
             <button
               onClick={handleCopy}
@@ -240,7 +244,7 @@ export function AuditResults({ record }: Props) {
             </Link>
           </div>
 
-          {/* ── Email gate ── */}
+          {/* Email gate */}
           {!summary.isAlreadyOptimal && (
             <div className="card border-brand-500/20 animate-fade-up">
               <p className="text-sm font-semibold mb-1">Get this report by email</p>
@@ -263,9 +267,11 @@ export function AuditResults({ record }: Props) {
               rel="noopener noreferrer"
             >
               Credex
-            </a>{" "}
-            · Pricing verified {new Date(record.summary.generatedAt).toLocaleDateString()}
+            </a>
+            {" "}· Pricing verified{" "}
+            {new Date(record.summary.generatedAt).toLocaleDateString()}
           </p>
+
         </div>
       </div>
     </main>
@@ -294,8 +300,9 @@ function ToolResultCard({ result }: { result: ToolAuditResult }) {
               {config.icon} {config.label}
             </span>
           </div>
-          <p className="text-xs text-[#8aada6] leading-relaxed">{result.reasoning}</p>
-
+          <p className="text-xs text-[#8aada6] leading-relaxed">
+            {result.reasoning}
+          </p>
           {result.recommendedPlan && result.recommendationType !== "optimal" && (
             <p className="text-xs text-brand-400 mt-1.5 font-medium">
               → Switch to: {result.recommendedTool ?? result.recommendedPlan}
@@ -338,7 +345,9 @@ function EmailCaptureForm({
   const [email, setEmail] = useState("");
   const [company, setCompany] = useState("");
   const [role, setRole] = useState("");
-  const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">(
+    "idle"
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -372,9 +381,13 @@ function EmailCaptureForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
-      {/* Honeypot */}
-      <input type="text" name="_hp" className="hidden" tabIndex={-1} autoComplete="off" />
-
+      <input
+        type="text"
+        name="_hp"
+        className="hidden"
+        tabIndex={-1}
+        autoComplete="off"
+      />
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <input
           type="email"
@@ -399,7 +412,6 @@ function EmailCaptureForm({
           className="input-field"
         />
       </div>
-
       <button
         type="submit"
         disabled={status === "loading" || !email}
@@ -407,7 +419,6 @@ function EmailCaptureForm({
       >
         {status === "loading" ? "Sending…" : "Send me this report →"}
       </button>
-
       {status === "error" && (
         <p className="text-red-400 text-xs text-center">
           Something went wrong. Please try again.
@@ -417,11 +428,13 @@ function EmailCaptureForm({
   );
 }
 
-// ─── Notify form (for already-optimal audits) ─────────────────────────────────
+// ─── Notify form ──────────────────────────────────────────────────────────────
 
 function NotifyForm({ auditId }: { auditId: string }) {
   const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">(
+    "idle"
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -441,7 +454,11 @@ function NotifyForm({ auditId }: { auditId: string }) {
   };
 
   if (status === "done") {
-    return <p className="text-emerald-400 text-sm font-medium">✓ You&apos;re on the list!</p>;
+    return (
+      <p className="text-emerald-400 text-sm font-medium">
+        ✓ You&apos;re on the list!
+      </p>
+    );
   }
 
   return (
