@@ -9,7 +9,7 @@
 ```bash
 git clone https://github.com/YOUR_USERNAME/spendlens.git
 cd spendlens
-cp .env.example .env.local
+cp .env .env.local
 # Fill in .env.local with your keys
 npm install
 npm run dev
