@@ -1,13 +1,15 @@
 import type { AuditFormState, AuditSummary, AuditRecord } from "@/types";
+import { supabaseAdmin } from "./supabase";
 
-// In-memory fallback (used when Supabase env vars not set, e.g. in tests/CI)
+// In-memory fallback — always available
 const memoryStore = new Map<string, AuditRecord>();
 
 function hasSupabase(): boolean {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   return (
-    !!process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    !!process.env.SUPABASE_SERVICE_ROLE_KEY &&
-    process.env.NEXT_PUBLIC_SUPABASE_URL !== "https://test.supabase.co"
+    !!url &&
+    url !== "https://test.supabase.co" &&
+    !!process.env.SUPABASE_SERVICE_ROLE_KEY
   );
 }
 
@@ -24,13 +26,12 @@ export async function storeAudit(
     createdAt: new Date().toISOString(),
   };
 
-  // Always write to memory (fast reads for the immediate redirect)
+  // Always write to memory first (instant redirect)
   memoryStore.set(id, record);
 
-  // Also persist to Supabase if configured
+  // Persist to Supabase if configured
   if (hasSupabase()) {
     try {
-      const { supabaseAdmin } = await import("./supabase");
       await supabaseAdmin.from("audits").insert({
         id,
         form_state: formState,
@@ -39,20 +40,18 @@ export async function storeAudit(
       });
     } catch (err) {
       console.error("[storage] Supabase write error:", err);
-      // Memory store is the fallback — don't throw
     }
   }
 }
 
 export async function getAudit(id: string): Promise<AuditRecord | null> {
-  // Check memory first (fast, covers same-process requests)
+  // Check memory first
   const memHit = memoryStore.get(id);
   if (memHit) return memHit;
 
-  // Fall back to Supabase (covers cross-process / after restart)
+  // Fall back to Supabase
   if (hasSupabase()) {
     try {
-      const { supabaseAdmin } = await import("./supabase");
       const { data, error } = await supabaseAdmin
         .from("audits")
         .select("*")
@@ -69,7 +68,6 @@ export async function getAudit(id: string): Promise<AuditRecord | null> {
         createdAt: data.created_at,
       };
 
-      // Warm memory cache
       memoryStore.set(id, record);
       return record;
     } catch (err) {
@@ -82,6 +80,5 @@ export async function getAudit(id: string): Promise<AuditRecord | null> {
 }
 
 export async function auditExists(id: string): Promise<boolean> {
-  const record = await getAudit(id);
-  return record !== null;
+  return (await getAudit(id)) !== null;
 }
