@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { nanoid } from "nanoid";
 import { runAudit } from "@/lib/auditEngine";
 import { storeAudit } from "@/lib/storage";
+import { generateAISummary } from "@/lib/generateSummary";
 import type { AuditFormState } from "@/types";
 
 const rateLimit = new Map<string, { count: number; resetAt: number }>();
@@ -19,9 +20,14 @@ function checkRateLimit(ip: string): boolean {
 }
 
 export async function POST(req: NextRequest) {
-  const ip = req.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
+  const ip =
+    req.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
+
   if (!checkRateLimit(ip)) {
-    return NextResponse.json({ error: "Too many requests. Please wait a moment." }, { status: 429 });
+    return NextResponse.json(
+      { error: "Too many requests. Please wait a moment." },
+      { status: 429 }
+    );
   }
 
   let body: AuditFormState & { _hp?: string };
@@ -44,10 +50,19 @@ export async function POST(req: NextRequest) {
 
   const enabledTools = form.tools.filter((t) => t.enabled);
   if (enabledTools.length === 0) {
-    return NextResponse.json({ error: "At least one tool must be enabled" }, { status: 400 });
+    return NextResponse.json(
+      { error: "At least one tool must be enabled" },
+      { status: 400 }
+    );
   }
 
+  // Run deterministic audit engine first
   const summary = runAudit(form);
+
+  // Generate AI summary — falls back to template on any failure
+  const aiSummary = await generateAISummary(form, summary);
+  summary.aiSummary = aiSummary;
+
   const id = nanoid(10);
   await storeAudit(id, form, summary);
 
