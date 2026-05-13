@@ -154,7 +154,7 @@ export function AuditResults({ record }: Props) {
                   an additional 20–30% with credits.
                 </p>
               </div>
-              
+              <a
                 href="https://credex.rocks"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -260,7 +260,7 @@ export function AuditResults({ record }: Props) {
 
           <p className="text-center text-xs text-[#4a6b62] pb-8">
             Powered by{" "}
-            
+            <a
               href="https://credex.rocks"
               className="text-brand-400 hover:underline"
               target="_blank"
