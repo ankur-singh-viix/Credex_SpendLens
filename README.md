@@ -14,18 +14,16 @@ Built as a lead-generation asset for [Credex](https://credex.rocks), which sells
 ![Shareable card](./docs/screenshot-share.png)
 -->
 
-🎥 [Screen recording — Loom link here]
-
 ## Live URL
 
-> https://your-app.vercel.app ← replace this
+ https://credex-spend-lens-im5l.vercel.app/
 
 ## Quick Start
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/spendlens.git
+git clone https://github.com/ankur-singh-viix/Credex_SpendLens
 cd spendlens
-cp .env.example .env.local
+cp .env.local
 # Fill in .env.local — see .env.example for required keys
 npm install
 npm run dev
